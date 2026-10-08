@@ -87,10 +87,10 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
 
       {/* Discreet Developer / Kiosk Diagnostic Top Ribbon (Can be toggled or clicked) */}
       <header
-        className={`relative z-20 w-full px-4 sm:px-6 py-2 flex items-center justify-between border-b backdrop-blur-sm text-[11px] transition-colors ${
+        className={`sticky top-0 z-50 w-full px-4 sm:px-6 py-2 flex items-center justify-between border-b backdrop-blur-md text-[11px] transition-colors shadow-sm ${
           isLight
-            ? 'border-[#e4dcce] bg-[#ffffff]/85 text-[#6b6154]'
-            : 'border-[#201d19]/80 bg-[#0e0d0b]/80 text-[#a09485]'
+            ? 'border-[#e4dcce] bg-[#ffffff]/90 text-[#6b6154]'
+            : 'border-[#201d19]/80 bg-[#0e0d0b]/90 text-[#a09485]'
         }`}
       >
         <div className="flex items-center gap-3">
