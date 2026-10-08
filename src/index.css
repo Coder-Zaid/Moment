@@ -1,0 +1,446 @@
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Cormorant Garamond", Georgia, serif;
+  --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-handwritten: "Caveat", cursive, system-ui;
+
+  --color-canvas-dark: #0b0a09;
+  --color-canvas-panel: #141311;
+  --color-canvas-elevated: #1d1b18;
+
+  --color-cream-100: #faf7f2;
+  --color-cream-200: #f4efe6;
+  --color-cream-300: #e8e1d5;
+  --color-cream-400: #d6cbbe;
+
+  --color-bronze-300: #d99c6b;
+  --color-bronze-400: #b87d4b;
+  --color-bronze-500: #9e6435;
+  --color-bronze-600: #784821;
+
+  --color-film-paper: #f4efe6;
+  --color-film-border: #dfd7ca;
+}
+
+@layer base {
+  * {
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+    box-sizing: border-box;
+  }
+
+  body {
+    background-color: #0b0a09;
+    color: #f4efe6;
+    font-family: var(--font-sans);
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: hidden;
+  }
+
+  /* Accessible focus rings */
+  :focus-visible {
+    outline: 2px solid #b87d4b;
+    outline-offset: 3px;
+  }
+}
+
+/* Film strip realistic physical dropshadows */
+.shadow-film-strip {
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.12),
+    0 8px 24px -4px rgba(0, 0, 0, 0.4),
+    0 24px 48px -12px rgba(0, 0, 0, 0.6);
+}
+
+.shadow-film-strip-hover {
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.15),
+    0 16px 36px -6px rgba(0, 0, 0, 0.5),
+    0 32px 64px -16px rgba(0, 0, 0, 0.7);
+}
+
+/* Subtle physical paper grain */
+.paper-grain {
+  background-image: radial-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 0);
+  background-size: 8px 8px;
+}
+
+/* Font handwritten utility */
+.font-handwritten {
+  font-family: var(--font-handwritten);
+}
+
+/* Authentic washi tape effect with semi-transparent frosted paper grain */
+.washi-tape {
+  background: rgba(244, 239, 230, 0.72);
+  backdrop-filter: blur(2px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+  border-left: 2px dashed rgba(200, 185, 165, 0.6);
+  border-right: 2px dashed rgba(200, 185, 165, 0.6);
+}
+
+/* Die-cut sticker shadow */
+.sticker-shadow {
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.15),
+    0 6px 14px rgba(0, 0, 0, 0.25);
+}
+
+/* Kiosk tactile button active press scale */
+.touch-press {
+  transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.12s ease;
+}
+.touch-press:active {
+  transform: scale(0.97);
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ==========================================================================
+   LIGHT MODE: ARCHIVAL WARM LINEN & FINE ART EDITORIAL GALLERY THEME
+   ========================================================================== */
+[data-theme="light"],
+body[data-theme="light"] {
+  color-scheme: light;
+  background-color: #f7f4ee;
+  color: #1a1714;
+}
+
+/* Base surface containers & primary app background overrides */
+[data-theme="light"] .bg-\[\#070605\],
+[data-theme="light"] .bg-\[\#0b0a09\],
+[data-theme="light"] .bg-\[\#0d0c0b\],
+[data-theme="light"] .bg-\[\#0e0d0b\] {
+  background-color: #f7f4ee !important;
+}
+
+/* Main card panels, cards, sheets, modals, dialogs, drawers */
+[data-theme="light"] .bg-\[\#100d0b\],
+[data-theme="light"] .bg-\[\#141210\],
+[data-theme="light"] .bg-\[\#141311\],
+[data-theme="light"] .bg-\[\#161310\],
+[data-theme="light"] .bg-\[\#161411\],
+[data-theme="light"] .bg-\[\#171411\],
+[data-theme="light"] .bg-\[\#171512\],
+[data-theme="light"] .bg-\[\#181512\],
+[data-theme="light"] .bg-\[\#181614\],
+[data-theme="light"] .bg-\[\#191714\],
+[data-theme="light"] .bg-\[\#1a1714\],
+[data-theme="light"] .bg-\[\#1a1815\],
+[data-theme="light"] .bg-\[\#1b1713\],
+[data-theme="light"] .bg-\[\#1b1916\],
+[data-theme="light"] .bg-\[\#1b1916\]\/80,
+[data-theme="light"] .bg-\[\#1c1815\],
+[data-theme="light"] .bg-\[\#1e1a15\],
+[data-theme="light"] .bg-\[\#1e1a16\],
+[data-theme="light"] .bg-\[\#1e1b17\] {
+  background-color: #ffffff !important;
+}
+
+/* Translucent frosted panels */
+[data-theme="light"] .bg-\[\#141210\]\/60,
+[data-theme="light"] .bg-\[\#141210\]\/80,
+[data-theme="light"] .bg-\[\#141210\]\/90,
+[data-theme="light"] .bg-\[\#181512\]\/90,
+[data-theme="light"] .bg-\[\#0e0d0b\]\/80 {
+  background-color: rgba(255, 255, 255, 0.94) !important;
+}
+
+/* Light mode button contrast */
+[data-theme="light"] .bg-\[\#1b1916\]\/80 {
+  background-color: #ffffff !important;
+  color: #241e18 !important;
+  border-color: #dfd7ca !important;
+}
+[data-theme="light"] .bg-\[\#1b1916\]\/80 span,
+[data-theme="light"] .bg-\[\#1b1916\]\/80 svg {
+  color: #241e18 !important;
+}
+[data-theme="light"] .bg-\[\#1b1916\]\/80:hover {
+  background-color: #f7f3eb !important;
+}
+
+/* Badges overlaying photo viewfinders & camera view */
+[data-theme="light"] .bg-black\/60,
+[data-theme="light"] .bg-black\/70,
+[data-theme="light"] .bg-black\/80,
+[data-theme="light"] .bg-black\/60 *,
+[data-theme="light"] .bg-black\/70 *,
+[data-theme="light"] .bg-black\/80 * {
+  color: #f4efe6 !important;
+}
+
+/* Secondary controls, tabs, pills, inner thumbnail wells, badges */
+[data-theme="light"] .bg-\[\#1f1b16\],
+[data-theme="light"] .bg-\[\#1f1b17\],
+[data-theme="light"] .bg-\[\#1f1c18\],
+[data-theme="light"] .bg-\[\#201c18\],
+[data-theme="light"] .bg-\[\#221c17\],
+[data-theme="light"] .bg-\[\#221f1c\],
+[data-theme="light"] .bg-\[\#241f19\],
+[data-theme="light"] .bg-\[\#241f1a\],
+[data-theme="light"] .bg-\[\#24201b\],
+[data-theme="light"] .bg-\[\#24211d\],
+[data-theme="light"] .bg-\[\#25221e\],
+[data-theme="light"] .bg-\[\#26201a\],
+[data-theme="light"] .bg-\[\#28221b\],
+[data-theme="light"] .bg-\[\#2a221b\],
+[data-theme="light"] .bg-\[\#2a241e\],
+[data-theme="light"] .bg-\[\#2c2620\],
+[data-theme="light"] .bg-\[\#2d2925\],
+[data-theme="light"] .bg-\[\#2e2720\],
+[data-theme="light"] .bg-\[\#302820\],
+[data-theme="light"] .bg-\[\#332a22\],
+[data-theme="light"] .bg-\[\#3a342c\],
+[data-theme="light"] .bg-\[\#3d3226\] {
+  background-color: #f2ebd9 !important;
+}
+
+/* Interactive hover backgrounds */
+[data-theme="light"] .hover\:bg-\[\#1f1c18\]:hover,
+[data-theme="light"] .hover\:bg-\[\#1a1714\]:hover,
+[data-theme="light"] .hover\:bg-\[\#201c18\]:hover,
+[data-theme="light"] .hover\:bg-\[\#221c17\]:hover,
+[data-theme="light"] .hover\:bg-\[\#25221e\]:hover,
+[data-theme="light"] .hover\:bg-\[\#28221b\]:hover,
+[data-theme="light"] .hover\:bg-\[\#2a221b\]:hover {
+  background-color: #e8e0ce !important;
+}
+
+/* ==========================================================================
+   LIGHT MODE: TYPOGRAPHY HIERARCHY (DEEP INK TO SEPIA)
+   ========================================================================== */
+
+/* Headings & prominent text: Rich dark charcoal ink */
+[data-theme="light"] .text-\[\#ffffff\],
+[data-theme="light"] .text-\[\#f4efe6\],
+[data-theme="light"] .text-\[\#faf6f0\],
+[data-theme="light"] .text-\[\#faf5ee\],
+[data-theme="light"] .text-\[\#faf4ea\],
+[data-theme="light"] .text-\[\#f6efe4\],
+[data-theme="light"] .text-\[\#f5f0e6\],
+[data-theme="light"] .text-\[\#f5efe6\],
+[data-theme="light"] .text-\[\#f5ede2\],
+[data-theme="light"] .text-\[\#f5ebd9\],
+[data-theme="light"] .text-\[\#f0e8dc\],
+[data-theme="light"] .text-\[\#f0e7db\],
+[data-theme="light"] .text-\[\#ece4d8\],
+[data-theme="light"] .text-\[\#e8dfd2\],
+[data-theme="light"] .text-\[\#e8dfd1\],
+[data-theme="light"] .text-\[\#e8ded0\],
+[data-theme="light"] .text-\[\#e6dfd1\],
+[data-theme="light"] .text-\[\#e6ded1\] {
+  color: #1a1714 !important;
+}
+
+/* Subtitles, labels, and secondary reading text: Warm espresso */
+[data-theme="light"] .text-\[\#d8cebe\],
+[data-theme="light"] .text-\[\#d8cfbe\],
+[data-theme="light"] .text-\[\#cfbca8\],
+[data-theme="light"] .text-\[\#c8beaf\],
+[data-theme="light"] .text-\[\#c4baa8\],
+[data-theme="light"] .text-\[\#c2b6a5\],
+[data-theme="light"] .text-\[\#c2b6a4\],
+[data-theme="light"] .text-\[\#c2b5a1\],
+[data-theme="light"] .text-\[\#b8af9f\],
+[data-theme="light"] .text-\[\#b8ab9a\],
+[data-theme="light"] .text-\[\#b8ab99\],
+[data-theme="light"] .text-\[\#b5a999\],
+[data-theme="light"] .text-\[\#b0a494\],
+[data-theme="light"] .text-\[\#a89e90\],
+[data-theme="light"] .text-\[\#a89d8d\],
+[data-theme="light"] .text-\[\#a89c8a\],
+[data-theme="light"] .text-\[\#a89b8a\],
+[data-theme="light"] .text-\[\#a39786\],
+[data-theme="light"] .text-\[\#a09485\],
+[data-theme="light"] .text-\[\#a09483\] {
+  color: #55493b !important;
+}
+
+/* Muted captions, frame numbers, helper hints: Sepia charcoal */
+[data-theme="light"] .text-\[\#9e9282\],
+[data-theme="light"] .text-\[\#9e907f\],
+[data-theme="light"] .text-\[\#9e8f7a\],
+[data-theme="light"] .text-\[\#9c9080\],
+[data-theme="light"] .text-\[\#94897a\],
+[data-theme="light"] .text-\[\#948877\],
+[data-theme="light"] .text-\[\#948777\],
+[data-theme="light"] .text-\[\#8c8072\],
+[data-theme="light"] .text-\[\#8c8071\],
+[data-theme="light"] .text-\[\#8c7f70\],
+[data-theme="light"] .text-\[\#8a7f70\],
+[data-theme="light"] .text-\[\#8a7e70\],
+[data-theme="light"] .text-\[\#877c6e\],
+[data-theme="light"] .text-\[\#807464\],
+[data-theme="light"] .text-\[\#786e62\],
+[data-theme="light"] .text-\[\#786e61\],
+[data-theme="light"] .text-\[\#786e60\],
+[data-theme="light"] .text-\[\#736758\],
+[data-theme="light"] .text-\[\#6e6252\],
+[data-theme="light"] .text-\[\#6b6256\],
+[data-theme="light"] .text-\[\#6b6154\],
+[data-theme="light"] .text-\[\#695d4e\],
+[data-theme="light"] .text-\[\#685c4c\],
+[data-theme="light"] .text-\[\#594d3f\] {
+  color: #7b6f5e !important;
+}
+
+/* Hover text contrast */
+[data-theme="light"] .hover\:text-\[\#f4efe6\]:hover,
+[data-theme="light"] .hover\:text-white:hover {
+  color: #12100e !important;
+}
+
+/* ==========================================================================
+   LIGHT MODE: BORDERS & DIVIDERS (WARM ARCHIVAL PARCHMENT)
+   ========================================================================== */
+[data-theme="light"] .border-\[\#1e1a16\],
+[data-theme="light"] .border-\[\#201d18\],
+[data-theme="light"] .border-\[\#201d19\],
+[data-theme="light"] .border-\[\#231f1a\],
+[data-theme="light"] .border-\[\#24201b\],
+[data-theme="light"] .border-\[\#26201a\],
+[data-theme="light"] .border-\[\#26211a\],
+[data-theme="light"] .border-\[\#26211b\],
+[data-theme="light"] .border-\[\#29241e\],
+[data-theme="light"] .border-\[\#2a241d\],
+[data-theme="light"] .border-\[\#2b241d\],
+[data-theme="light"] .border-\[\#2b251e\],
+[data-theme="light"] .border-\[\#2b251f\],
+[data-theme="light"] .border-\[\#2b2620\],
+[data-theme="light"] .border-\[\#2c261e\],
+[data-theme="light"] .border-\[\#2d261e\],
+[data-theme="light"] .border-\[\#2d2720\],
+[data-theme="light"] .border-\[\#2d2925\],
+[data-theme="light"] .border-\[\#2e261f\],
+[data-theme="light"] .border-\[\#2e271f\],
+[data-theme="light"] .border-\[\#2e2821\],
+[data-theme="light"] .border-\[\#2e2924\],
+[data-theme="light"] .border-\[\#30271e\],
+[data-theme="light"] .border-\[\#302820\],
+[data-theme="light"] .border-\[\#332a20\],
+[data-theme="light"] .border-\[\#332a21\],
+[data-theme="light"] .border-\[\#332b22\],
+[data-theme="light"] .border-\[\#332c23\],
+[data-theme="light"] .border-\[\#332e27\],
+[data-theme="light"] .border-\[\#332e29\],
+[data-theme="light"] .border-\[\#342d25\],
+[data-theme="light"] .border-\[\#362e24\],
+[data-theme="light"] .border-\[\#382f23\],
+[data-theme="light"] .border-\[\#382f25\],
+[data-theme="light"] .border-\[\#383025\],
+[data-theme="light"] .border-\[\#383126\],
+[data-theme="light"] .border-\[\#383229\],
+[data-theme="light"] .border-\[\#38322a\],
+[data-theme="light"] .border-\[\#3b3125\],
+[data-theme="light"] .border-\[\#3b3226\],
+[data-theme="light"] .border-\[\#3b3227\],
+[data-theme="light"] .border-\[\#3b3228\],
+[data-theme="light"] .border-\[\#3b3329\],
+[data-theme="light"] .border-\[\#3b342c\],
+[data-theme="light"] .border-\[\#3d3429\],
+[data-theme="light"] .border-\[\#3d352b\],
+[data-theme="light"] .border-\[\#3d362d\],
+[data-theme="light"] .border-\[\#3d372e\],
+[data-theme="light"] .border-\[\#3e342a\],
+[data-theme="light"] .border-\[\#3e3528\],
+[data-theme="light"] .border-\[\#3f352a\],
+[data-theme="light"] .border-\[\#42392e\],
+[data-theme="light"] .border-\[\#423c34\],
+[data-theme="light"] .border-\[\#473f37\],
+[data-theme="light"] .border-\[\#4a433c\],
+[data-theme="light"] .border-\[\#524638\],
+[data-theme="light"] .border-\[\#52493e\],
+[data-theme="light"] .border-\[\#635b51\] {
+  border-color: #dfd7ca !important;
+}
+
+[data-theme="light"] .hover\:border-\[\#42392e\]:hover,
+[data-theme="light"] .hover\:border-\[\#473f37\]:hover {
+  border-color: #b87d4b !important;
+}
+
+[data-theme="light"] .ring-offset-\[\#0b0a09\] {
+  --tw-ring-offset-color: #f7f4ee !important;
+}
+
+/* ==========================================================================
+   LIGHT MODE: FINE ART PAPERCRAFT SHADOWS & GRAIN
+   ========================================================================== */
+[data-theme="light"] .paper-grain {
+  background-image: radial-gradient(rgba(100, 80, 50, 0.06) 1px, transparent 0);
+  background-size: 8px 8px;
+}
+
+[data-theme="light"] .washi-tape {
+  background: rgba(240, 232, 218, 0.88);
+  box-shadow: 0 1px 4px rgba(60, 48, 30, 0.12);
+  border-left: 2px dashed rgba(190, 170, 145, 0.7);
+  border-right: 2px dashed rgba(190, 170, 145, 0.7);
+}
+
+[data-theme="light"] .sticker-shadow {
+  box-shadow:
+    0 2px 5px rgba(60, 48, 30, 0.12),
+    0 6px 16px rgba(60, 48, 30, 0.16);
+}
+
+[data-theme="light"] .shadow-film-strip {
+  box-shadow:
+    0 1px 4px rgba(60, 48, 30, 0.1),
+    0 8px 24px -4px rgba(60, 48, 30, 0.18),
+    0 20px 40px -12px rgba(60, 48, 30, 0.22);
+}
+
+[data-theme="light"] .shadow-film-strip-hover {
+  box-shadow:
+    0 2px 6px rgba(60, 48, 30, 0.12),
+    0 16px 36px -6px rgba(60, 48, 30, 0.24),
+    0 32px 60px -16px rgba(60, 48, 30, 0.3);
+}
+
+[data-theme="light"] .shadow-2xl {
+  box-shadow: 0 10px 30px -4px rgba(70, 52, 30, 0.08), 0 4px 10px -2px rgba(70, 52, 30, 0.04) !important;
+}
+
+[data-theme="light"] .shadow-xl {
+  box-shadow: 0 8px 24px -4px rgba(70, 52, 30, 0.07), 0 2px 6px -1px rgba(70, 52, 30, 0.03) !important;
+}
+
+[data-theme="light"] .shadow-lg {
+  box-shadow: 0 6px 16px -3px rgba(70, 52, 30, 0.08), 0 2px 4px -1px rgba(70, 52, 30, 0.04) !important;
+}
+
+/* Keep primary bronze buttons and dark text in buttons legible */
+[data-theme="light"] .bg-\[\#b87d4b\] {
+  background-color: #b87d4b !important;
+}
+[data-theme="light"] .bg-\[\#b87d4b\] .text-\[\#140e08\],
+[data-theme="light"] .bg-\[\#b87d4b\].text-\[\#140e08\],
+[data-theme="light"] .bg-\[\#b87d4b\] span,
+[data-theme="light"] .bg-\[\#b87d4b\] svg {
+  color: #140e08 !important;
+}
+
+/* Ensure dark pill badges on photo viewfinders and camera preview have legible light text */
+[data-theme="light"] .bg-black\/60,
+[data-theme="light"] .bg-black\/60 *,
+[data-theme="light"] .bg-black\/70,
+[data-theme="light"] .bg-black\/70 *,
+[data-theme="light"] .bg-black\/80,
+[data-theme="light"] .bg-black\/80 * {
+  color: #f4efe6 !important;
+}
+
+
