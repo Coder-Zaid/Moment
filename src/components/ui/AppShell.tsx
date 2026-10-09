@@ -39,64 +39,49 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
     <div
       data-theme={state.theme}
       className={`relative h-[100dvh] max-h-[100dvh] w-full flex flex-col items-center justify-center transition-colors duration-300 overflow-hidden select-none ${
-        isLight ? 'bg-[#ede7db] text-[#1a1714]' : 'dark bg-[#060505] text-[#f4efe6]'
+        isLight ? 'bg-[#e7dfd1] text-[#1a1714]' : 'dark bg-[#080706] text-[#f4efe6]'
       }`}
     >
-      {/* Cinematic Background Atmosphere: Dedicated Photo Booth Studio Wallpaper & Ambient Glow */}
+      {/* Outer Studio Environment: Subtle ambient illumination around the kiosk totem on desktop */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        {/* Paired Photo Booth Wallpaper Image (Light and Dark paired versions matching reference) */}
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-700 pointer-events-none scale-[1.01]"
-          style={{
-            backgroundImage: `url(${isLight ? '/backgrounds/photobooth_bg_light.jpg' : '/backgrounds/photobooth_bg_dark.jpg'})`,
-            opacity: isLight ? 0.85 : 0.70,
-          }}
-        />
-
-        {/* Soft Vignette / Ambient Center Illumination to keep central content ultra-readable */}
         {isLight ? (
           <>
-            {/* Fine Art Paper / Soft Morning Center Glow */}
             <div
-              className="absolute -top-[10%] left-1/2 -translate-x-1/2 w-[850px] h-[550px] rounded-full opacity-30 blur-[130px]"
+              className="absolute -top-[15%] left-1/2 -translate-x-1/2 w-[950px] h-[600px] rounded-full opacity-40 blur-[140px]"
               style={{
                 background:
-                  'radial-gradient(circle, rgba(245, 238, 228, 0.8) 0%, rgba(247, 244, 238, 0.4) 60%, transparent 80%)',
+                  'radial-gradient(circle, rgba(255, 250, 240, 0.9) 0%, rgba(235, 222, 204, 0.45) 60%, transparent 80%)',
               }}
             />
             <div
-              className="absolute -bottom-[15%] left-1/2 -translate-x-1/2 w-[700px] h-[400px] rounded-full opacity-25 blur-[110px]"
+              className="absolute -bottom-[20%] left-1/2 -translate-x-1/2 w-[800px] h-[500px] rounded-full opacity-30 blur-[130px]"
               style={{
                 background:
-                  'radial-gradient(circle, rgba(230, 215, 195, 0.4) 0%, transparent 70%)',
+                  'radial-gradient(circle, rgba(220, 202, 178, 0.4) 0%, transparent 70%)',
               }}
             />
-            <div className="absolute inset-0 paper-grain opacity-20" />
           </>
         ) : (
           <>
-            {/* Central top warm glow / spotlight */}
             <div
-              className="absolute -top-[10%] left-1/2 -translate-x-1/2 w-[850px] h-[550px] rounded-full opacity-30 blur-[120px]"
+              className="absolute -top-[15%] left-1/2 -translate-x-1/2 w-[950px] h-[600px] rounded-full opacity-35 blur-[140px]"
               style={{
                 background:
-                  'radial-gradient(circle, rgba(184, 125, 75, 0.35) 0%, rgba(138, 85, 45, 0.15) 50%, transparent 80%)',
+                  'radial-gradient(circle, rgba(184, 125, 75, 0.35) 0%, rgba(120, 72, 33, 0.15) 50%, transparent 80%)',
               }}
             />
-            {/* Bottom subtle ambient warmth */}
             <div
-              className="absolute -bottom-[15%] left-1/2 -translate-x-1/2 w-[700px] h-[400px] rounded-full opacity-20 blur-[100px]"
+              className="absolute -bottom-[20%] left-1/2 -translate-x-1/2 w-[800px] h-[500px] rounded-full opacity-25 blur-[120px]"
               style={{
                 background:
-                  'radial-gradient(circle, rgba(196, 140, 89, 0.25) 0%, transparent 70%)',
+                  'radial-gradient(circle, rgba(160, 100, 50, 0.2) 0%, transparent 70%)',
               }}
             />
-            <div className="absolute inset-0 paper-grain opacity-20" />
           </>
         )}
       </div>
 
-      {/* Physical Photo Booth Kiosk Enclosure / Aspect Ratio Frame */}
+      {/* Physical Photo Booth Kiosk Enclosure / Section */}
       <div
         className={`relative z-10 flex flex-col h-full max-h-[100dvh] w-full overflow-hidden transition-all duration-300 ${
           kioskRatio === '9:16'
@@ -110,6 +95,35 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
             : 'bg-[#0b0a09] border-[#2c261e]/80 text-[#f4efe6]'
         }`}
       >
+        {/* Photobooth Background Wallpaper & Paper Grain applied directly on THIS section itself */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+          <div
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-700 pointer-events-none"
+            style={{
+              backgroundImage: `url(${isLight ? '/backgrounds/photobooth_bg_light.jpg' : '/backgrounds/photobooth_bg_dark.jpg'})`,
+              opacity: isLight ? 0.90 : 0.80,
+            }}
+          />
+          {/* Soft center illumination for central readability */}
+          {isLight ? (
+            <div
+              className="absolute inset-0 opacity-40 pointer-events-none"
+              style={{
+                background:
+                  'radial-gradient(circle at 50% 50%, rgba(247, 244, 238, 0.7) 0%, rgba(247, 244, 238, 0.3) 60%, transparent 100%)',
+              }}
+            />
+          ) : (
+            <div
+              className="absolute inset-0 opacity-30 pointer-events-none"
+              style={{
+                background:
+                  'radial-gradient(circle at 50% 50%, rgba(24, 20, 16, 0.6) 0%, transparent 100%)',
+              }}
+            />
+          )}
+          <div className="absolute inset-0 paper-grain opacity-20 pointer-events-none" />
+        </div>
         {/* Kiosk Hardware Top Bezel (Discreet camera pinhole & hardware sensor bar on desktop view) */}
         {kioskRatio !== 'fill' && (
           <div className="hidden sm:flex items-center justify-center py-1 gap-2.5 opacity-40 shrink-0 pointer-events-none select-none">
