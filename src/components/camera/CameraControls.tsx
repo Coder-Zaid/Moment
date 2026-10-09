@@ -1,6 +1,6 @@
 import React from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
-import { SwitchCamera, Volume2, VolumeX, X, Camera } from 'lucide-react'
+import { SwitchCamera, Volume2, VolumeX, X, Camera, Shuffle } from 'lucide-react'
 
 interface CameraControlsProps {
   onCapture: () => void
@@ -14,6 +14,8 @@ interface CameraControlsProps {
   onToggleSound: () => void
   disabled?: boolean
   isLight?: boolean
+  onNextPose?: () => void
+  showPoseGuide?: boolean
 }
 
 export const CameraControls: React.FC<CameraControlsProps> = ({
@@ -28,6 +30,8 @@ export const CameraControls: React.FC<CameraControlsProps> = ({
   onToggleSound,
   disabled = false,
   isLight = false,
+  onNextPose,
+  showPoseGuide = false,
 }) => {
   const shouldReduceMotion = useReducedMotion()
 
@@ -71,7 +75,7 @@ export const CameraControls: React.FC<CameraControlsProps> = ({
 
       {/* Center Shutter Button: Bold, Terracotta, Highly Visible */}
       <div className="relative flex flex-col items-center">
-        {isRetakeMode && retakeIndex !== null && (
+        {isRetakeMode && retakeIndex !== null ? (
           <div className="absolute -top-8 flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#c97d66] text-white text-[11px] font-mono uppercase font-bold tracking-wider shadow-lg z-30">
             <span>RETAKING FRAME {String(retakeIndex + 1).padStart(2, '0')}</span>
             <button
@@ -83,7 +87,11 @@ export const CameraControls: React.FC<CameraControlsProps> = ({
               <X className="w-3.5 h-3.5 stroke-[3]" />
             </button>
           </div>
-        )}
+        ) : showPoseGuide && !isCountingDown && !disabled ? (
+          <div className="absolute -top-7 flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-stone-900/80 text-[#ffd166] text-[10px] font-mono tracking-wider shadow-md backdrop-blur-xs border border-white/10 z-20 whitespace-nowrap">
+            <span>📸 Click shutter to pose & snap</span>
+          </div>
+        ) : null}
 
         <motion.button
           type="button"
@@ -91,7 +99,7 @@ export const CameraControls: React.FC<CameraControlsProps> = ({
           disabled={disabled || isCountingDown || isCapturing}
           whileHover={shouldReduceMotion || disabled ? undefined : { scale: 1.05 }}
           whileTap={shouldReduceMotion || disabled ? undefined : { scale: 0.93 }}
-          title={isCountingDown ? 'Counting down...' : 'Take Photo'}
+          title={isCountingDown ? 'Counting down...' : 'Take Photo (Switches to camera)'}
           aria-label={isCountingDown ? 'Counting down...' : 'Take Photo'}
           className={`relative w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 p-1.5 flex items-center justify-center cursor-pointer touch-press disabled:opacity-50 shadow-2xl transition-all ${
             isLight
@@ -118,8 +126,8 @@ export const CameraControls: React.FC<CameraControlsProps> = ({
         </motion.button>
       </div>
 
-      {/* Right Spacer / Balance Status Badge */}
-      <div className="w-24 flex justify-end">
+      {/* Right Controls: Next Pose or Retake Done or Shutter Badge */}
+      <div className="w-28 flex justify-end">
         {isRetakeMode ? (
           <button
             type="button"
@@ -131,6 +139,20 @@ export const CameraControls: React.FC<CameraControlsProps> = ({
             }`}
           >
             Done
+          </button>
+        ) : showPoseGuide && onNextPose ? (
+          <button
+            type="button"
+            onClick={onNextPose}
+            title="Randomize / Next Pose Idea"
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border-2 text-xs font-mono font-bold tracking-wider transition-all cursor-pointer touch-press shadow-sm active:scale-95 ${
+              isLight
+                ? 'bg-white hover:bg-stone-50 border-stone-300 text-stone-800'
+                : 'bg-[#1b1713] hover:bg-[#28221b] border-[#3b3227] text-[#ffd166]'
+            }`}
+          >
+            <Shuffle className="w-3.5 h-3.5 text-[#c97d66]" />
+            <span>Pose</span>
           </button>
         ) : (
           <div

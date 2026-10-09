@@ -11,7 +11,7 @@ import { playCountdownTone, playShutterSound } from '../utils/audioCues'
 import { FILM_FORMATS } from '../constants/theme'
 import { ArrowRight } from 'lucide-react'
 import { Sticker, WashiTape } from '../components/decorations'
-
+import { getRandomPose, POSE_IDEAS, type PoseIdea } from '../constants/poseIdeas'
 
 export const CameraCaptureScreen: React.FC = () => {
   const {
@@ -40,6 +40,12 @@ export const CameraCaptureScreen: React.FC = () => {
   const [retakeIndex, setRetakeIndex] = useState<number | null>(null)
   const [soundEnabled, setSoundEnabled] = useState(state.soundEnabled)
 
+  // Pose Inspiration state: display internet pose photo before shutter; cycle to different each time
+  const [usedPoseIds, setUsedPoseIds] = useState<string[]>([])
+  const [currentPose, setCurrentPose] = useState<PoseIdea>(() => getRandomPose([]))
+  const [showPoseGuide, setShowPoseGuide] = useState(true)
+  const [isPeekingCamera, setIsPeekingCamera] = useState(false)
+
   const countdownTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const currentPhotos = state.photos
@@ -47,6 +53,21 @@ export const CameraCaptureScreen: React.FC = () => {
 
   const isComplete = currentPhotos.length >= requiredPhotoCount && retakeIndex === null
   const activeTargetIndex = retakeIndex !== null ? retakeIndex : currentPhotos.length
+
+  // Pick a fresh, different pose from internet poses library
+  const handleNextPose = () => {
+    setCurrentPose((prev) => {
+      const nextExcluded = [...usedPoseIds, prev.id]
+      const availableCount = POSE_IDEAS.filter((p) => !nextExcluded.includes(p.id)).length
+      const candidate = getRandomPose(availableCount > 0 ? nextExcluded : [prev.id])
+      setUsedPoseIds((prevUsed) => [...prevUsed, prev.id])
+      return candidate
+    })
+  }
+
+  const handleTogglePeekCamera = () => {
+    setIsPeekingCamera((prev) => !prev)
+  }
 
   // Cleanup timer on unmount
   useEffect(() => {
@@ -78,6 +99,16 @@ export const CameraCaptureScreen: React.FC = () => {
         // Add new photo to sequence
         addPhotos([photo])
       }
+
+      // Check if more shots remain: if yes, pick a DIFFERENT pose and show pose guide!
+      const totalNow = currentPhotos.length + (retakeIndex === null ? 1 : 0)
+      if (totalNow < requiredPhotoCount) {
+        handleNextPose()
+        setShowPoseGuide(true)
+        setIsPeekingCamera(false)
+      } else {
+        setShowPoseGuide(false)
+      }
     } catch {
       // Capture error handled gracefully
     } finally {
@@ -88,9 +119,13 @@ export const CameraCaptureScreen: React.FC = () => {
     }
   }
 
-  // Trigger 3-2-1 countdown
+  // Trigger 3-2-1 countdown: instantly switches to camera view so guest sees themselves!
   const handleStartCapture = () => {
     if (cameraState !== 'ready' || isCapturing || countdownNumber !== null) return
+
+    // Immediately reveal live camera feed!
+    setShowPoseGuide(false)
+    setIsPeekingCamera(false)
 
     let count = 3
     setCountdownNumber(count)
@@ -116,6 +151,7 @@ export const CameraCaptureScreen: React.FC = () => {
       countdownTimerRef.current = null
     }
     setCountdownNumber(null)
+    setShowPoseGuide(true)
   }
 
   const handleBack = () => {
@@ -128,6 +164,14 @@ export const CameraCaptureScreen: React.FC = () => {
     handleCancelCountdown()
     stopStream()
     navigate('PHOTO_EDIT')
+  }
+
+  // Handle retaking a specific slot
+  const handleSelectRetake = (index: number) => {
+    setRetakeIndex(index)
+    handleNextPose()
+    setShowPoseGuide(true)
+    setIsPeekingCamera(false)
   }
 
   // Render camera permission or error cards if device fails
@@ -163,7 +207,7 @@ export const CameraCaptureScreen: React.FC = () => {
 
   return (
     <div className="flex-1 flex flex-col justify-between max-w-4xl mx-auto w-full py-1 sm:py-3 select-none">
-      {/* 1. TOP HEADER & COUNTER: Clean Frosted Card for High Contrast */}
+      {/* 1. TOP HEADER & COUNTER */}
       <header
         className={`flex items-center justify-between px-3 sm:px-6 py-2 z-10 rounded-2xl shadow-sm backdrop-blur-md mb-1 sm:mb-2 border ${
           isLight
@@ -206,7 +250,7 @@ export const CameraCaptureScreen: React.FC = () => {
         </div>
       </header>
 
-      {/* 2. MAIN IMMERSIVE CAMERA VIEWFINDER WITH PHOTO BOOTH ACCENTS */}
+      {/* 2. MAIN IMMERSIVE CAMERA VIEWFINDER WITH POSE GUIDE & PHOTO BOOTH ACCENTS */}
       <div className="relative w-full my-auto flex flex-col items-center">
         {/* Playful Top-Right Sticker on Viewfinder Frame */}
         <div className="absolute -top-3.5 right-6 z-20 pointer-events-none hidden sm:block">
@@ -218,6 +262,13 @@ export const CameraCaptureScreen: React.FC = () => {
           isMirrored={true}
           countdownNumber={countdownNumber}
           showFlash={showFlash}
+          currentPose={currentPose}
+          showPoseGuide={showPoseGuide && !isComplete}
+          onNextPose={handleNextPose}
+          onTogglePeekCamera={handleTogglePeekCamera}
+          isPeekingCamera={isPeekingCamera}
+          currentShotIndex={Math.min(activeTargetIndex + 1, requiredPhotoCount)}
+          totalShots={requiredPhotoCount}
         />
       </div>
 
@@ -233,7 +284,7 @@ export const CameraCaptureScreen: React.FC = () => {
           activeTargetIndex={activeTargetIndex}
           isRetakeMode={retakeIndex !== null}
           retakeIndex={retakeIndex}
-          onSelectRetake={(index) => setRetakeIndex(index)}
+          onSelectRetake={handleSelectRetake}
           disabled={countdownNumber !== null || isCapturing}
           isLight={isLight}
         />
@@ -248,15 +299,20 @@ export const CameraCaptureScreen: React.FC = () => {
           isCapturing={isCapturing}
           isRetakeMode={retakeIndex !== null}
           retakeIndex={retakeIndex}
-          onCancelRetake={() => setRetakeIndex(null)}
+          onCancelRetake={() => {
+            setRetakeIndex(null)
+            setShowPoseGuide(false)
+          }}
           soundEnabled={soundEnabled}
           onToggleSound={() => setSoundEnabled((prev) => !prev)}
           disabled={cameraState !== 'ready' || (isComplete && retakeIndex === null)}
           isLight={isLight}
+          onNextPose={handleNextPose}
+          showPoseGuide={showPoseGuide && !isComplete}
         />
       </div>
 
-      {/* 5. BOTTOM NAVIGATION / COMPLETION BAR: High Contrast Card */}
+      {/* 5. BOTTOM NAVIGATION / COMPLETION BAR */}
       <footer
         className={`w-full flex items-center justify-between gap-4 p-2.5 rounded-2xl shadow-md backdrop-blur-md px-4 mt-1 sm:mt-2 border ${
           isLight
