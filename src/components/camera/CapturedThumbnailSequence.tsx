@@ -11,6 +11,7 @@ interface CapturedThumbnailSequenceProps {
   retakeIndex: number | null
   onSelectRetake: (index: number) => void
   disabled?: boolean
+  isLight?: boolean
 }
 
 export const CapturedThumbnailSequence: React.FC<CapturedThumbnailSequenceProps> = ({
@@ -21,6 +22,7 @@ export const CapturedThumbnailSequence: React.FC<CapturedThumbnailSequenceProps>
   retakeIndex,
   onSelectRetake,
   disabled = false,
+  isLight = false,
 }) => {
   const shouldReduceMotion = useReducedMotion()
 
@@ -43,15 +45,23 @@ export const CapturedThumbnailSequence: React.FC<CapturedThumbnailSequenceProps>
               }
             }}
             className={`
-              relative w-16 sm:w-20 aspect-[4/3] rounded-lg overflow-hidden border-2
-              transition-all duration-200 cursor-pointer touch-press shrink-0
+              relative w-16 sm:w-20 aspect-[4/3] rounded-xl overflow-hidden border-2
+              transition-all duration-200 cursor-pointer touch-press shrink-0 shadow-sm
               ${
                 isBeingRetaken
-                  ? 'border-[#b87d4b] ring-2 ring-[#b87d4b] shadow-lg shadow-[#b87d4b]/30'
+                  ? isLight
+                    ? 'border-[#c97d66] ring-2 ring-[#c97d66] shadow-md bg-white'
+                    : 'border-[#ffd166] ring-2 ring-[#ffd166] shadow-md bg-[#1c1814]'
                   : isCurrentTarget
-                  ? 'border-[#b87d4b] border-dashed ring-1 ring-[#b87d4b]/60'
+                  ? isLight
+                    ? 'border-[#c97d66] border-dashed ring-2 ring-[#c97d66]/40 bg-[#c97d66]/10'
+                    : 'border-[#ffd166] border-dashed ring-2 ring-[#ffd166]/40 bg-[#ffd166]/10'
                   : photo
-                  ? 'border-[#3d362d] hover:border-[#b87d4b]/80 shadow'
+                  ? isLight
+                    ? 'border-stone-300 hover:border-stone-500 shadow bg-white'
+                    : 'border-[#3d362d] hover:border-[#b87d4b]/80 shadow bg-[#181512]'
+                  : isLight
+                  ? 'border-stone-300 bg-white/95'
                   : 'border-[#29241e] bg-[#141210]'
               }
             `}
@@ -65,23 +75,41 @@ export const CapturedThumbnailSequence: React.FC<CapturedThumbnailSequenceProps>
                 />
 
                 {/* Slot index indicator */}
-                <div className="absolute top-1 left-1 px-1 rounded bg-black/60 text-[8px] font-mono text-white">
+                <div className="absolute top-1 left-1 px-1.5 py-0.5 rounded bg-black/75 text-[9px] font-mono font-bold text-white shadow">
                   {slotNumber}
                 </div>
 
                 {/* Retake badge overlay on hover */}
-                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1 text-[9px] font-mono text-[#f4efe6] uppercase">
-                  <RotateCcw className="w-3 h-3 text-[#b87d4b]" />
+                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1 text-[10px] font-mono font-bold text-[#f4efe6] uppercase">
+                  <RotateCcw className="w-3.5 h-3.5 text-[#ffd166]" />
                   <span>Retake</span>
                 </div>
               </div>
             ) : (
-              <div className="w-full h-full flex flex-col items-center justify-center bg-[#171411] text-[#736758]">
-                <span className="font-mono text-xs font-semibold text-[#8c7f70]">
+              <div
+                className={`w-full h-full flex flex-col items-center justify-center ${
+                  isLight ? 'bg-white text-stone-700' : 'bg-[#171411] text-[#736758]'
+                }`}
+              >
+                <span
+                  className={`font-mono text-sm font-bold ${
+                    isCurrentTarget
+                      ? isLight
+                        ? 'text-[#c97d66]'
+                        : 'text-[#ffd166]'
+                      : isLight
+                      ? 'text-stone-900'
+                      : 'text-[#f4efe6]'
+                  }`}
+                >
                   {slotNumber}
                 </span>
                 {isCurrentTarget && (
-                  <span className="text-[7px] font-mono uppercase text-[#b87d4b] tracking-wider mt-0.5">
+                  <span
+                    className={`text-[8px] font-mono font-bold uppercase tracking-wider mt-0.5 ${
+                      isLight ? 'text-[#c97d66]' : 'text-[#ffd166]'
+                    }`}
+                  >
                     Next
                   </span>
                 )}

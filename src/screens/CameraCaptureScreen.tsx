@@ -163,24 +163,44 @@ export const CameraCaptureScreen: React.FC = () => {
 
   return (
     <div className="flex-1 flex flex-col justify-between max-w-4xl mx-auto w-full py-1 sm:py-3 select-none">
-      {/* 1. TOP HEADER & COUNTER (Matching Reference Image Panel 3: "<  02 / 04  [camera]") */}
-      <header className="flex items-center justify-between px-2 sm:px-4 pb-2 z-10">
+      {/* 1. TOP HEADER & COUNTER: Clean Frosted Card for High Contrast */}
+      <header
+        className={`flex items-center justify-between px-3 sm:px-6 py-2 z-10 rounded-2xl shadow-sm backdrop-blur-md mb-1 sm:mb-2 border ${
+          isLight
+            ? 'bg-white/95 border-stone-200 text-stone-900'
+            : 'bg-[#181512]/95 border-[#382f23] text-[#faf6f0]'
+        }`}
+      >
         <BackButton onClick={handleBack} />
 
         {/* Center Progress Counter */}
         <div className="flex flex-col items-center">
-          <div className="font-mono text-base sm:text-lg font-bold tracking-[0.25em] text-[#f4efe6]">
+          <div
+            className={`font-mono text-base sm:text-xl font-bold tracking-[0.25em] ${
+              isLight ? 'text-stone-900' : 'text-[#faf6f0]'
+            }`}
+          >
             {isComplete ? `${totalCount} / ${totalCount}` : `${displayCount} / ${totalCount}`}
           </div>
-          <span className="text-[9px] font-sans uppercase tracking-[0.25em] text-[#a09483]">
+          <span
+            className={`text-[10px] font-mono uppercase tracking-[0.25em] font-semibold ${
+              isLight ? 'text-[#8a5223]' : 'text-[#ffd166]'
+            }`}
+          >
             {formatConfig.name}
           </span>
         </div>
 
         {/* Status Pill */}
         <div className="w-20 flex justify-end">
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#1b1713] border border-[#332a21] text-[10px] font-mono text-[#b87d4b] uppercase">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#b87d4b] animate-ping" />
+          <div
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-full border text-[10px] font-mono font-bold uppercase shadow-sm ${
+              isLight
+                ? 'bg-stone-100 border-stone-300 text-stone-800'
+                : 'bg-[#1b1713] border-[#332a21] text-[#ffd166]'
+            }`}
+          >
+            <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
             <span>LIVE</span>
           </div>
         </div>
@@ -215,6 +235,7 @@ export const CameraCaptureScreen: React.FC = () => {
           retakeIndex={retakeIndex}
           onSelectRetake={(index) => setRetakeIndex(index)}
           disabled={countdownNumber !== null || isCapturing}
+          isLight={isLight}
         />
       </div>
 
@@ -231,15 +252,26 @@ export const CameraCaptureScreen: React.FC = () => {
           soundEnabled={soundEnabled}
           onToggleSound={() => setSoundEnabled((prev) => !prev)}
           disabled={cameraState !== 'ready' || (isComplete && retakeIndex === null)}
+          isLight={isLight}
         />
       </div>
 
-      {/* 5. BOTTOM NAVIGATION / COMPLETION BAR */}
-      <footer className="w-full flex items-center justify-between gap-4 pt-2 border-t border-[#201d18] px-2">
+      {/* 5. BOTTOM NAVIGATION / COMPLETION BAR: High Contrast Card */}
+      <footer
+        className={`w-full flex items-center justify-between gap-4 p-2.5 rounded-2xl shadow-md backdrop-blur-md px-4 mt-1 sm:mt-2 border ${
+          isLight
+            ? 'bg-white/95 border-stone-200'
+            : 'bg-[#181512]/95 border-[#382f23]'
+        }`}
+      >
         <button
           type="button"
           onClick={handleBack}
-          className="text-xs font-mono uppercase tracking-widest text-[#8c8072] hover:text-[#f4efe6] transition-colors py-2 cursor-pointer"
+          className={`text-xs font-mono font-bold uppercase tracking-widest transition-colors py-1.5 px-3.5 rounded-xl border cursor-pointer shadow-sm ${
+            isLight
+              ? 'bg-stone-100 hover:bg-stone-200 text-stone-800 border-stone-300'
+              : 'bg-[#221d18] hover:bg-[#2e2720] text-[#ffd166] border-[#3e3428]'
+          }`}
         >
           Cancel & Exit
         </button>
@@ -251,13 +283,19 @@ export const CameraCaptureScreen: React.FC = () => {
             scalloped={true}
             scallopColor={isLight ? '#382f25' : '#ffd166'}
             onClick={handleContinue}
-            icon={<ArrowRight className="w-4 h-4" />}
+            icon={<ArrowRight className="w-4 h-4 text-white" />}
             className="w-48 sm:w-56 tracking-widest font-semibold"
           >
             CONTINUE TO EDIT
           </PrimaryButton>
         ) : (
-          <div className="text-xs text-[#8c8072] tracking-wider uppercase font-mono">
+          <div
+            className={`text-xs tracking-wider uppercase font-mono font-bold px-3.5 py-1.5 rounded-full border shadow-sm ${
+              isLight
+                ? 'bg-amber-100 border-amber-300 text-amber-900'
+                : 'bg-[#241f19] border-[#3e3528] text-[#ffd166]'
+            }`}
+          >
             {requiredPhotoCount - currentPhotos.length} Shots Remaining
           </div>
         )}
