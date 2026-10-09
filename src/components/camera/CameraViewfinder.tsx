@@ -1,8 +1,8 @@
-import React, { type RefObject } from 'react'
+import React, { useState, type RefObject } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { EyeOff, Sparkles } from 'lucide-react'
+import { Sparkles } from 'lucide-react'
 import type { PoseIdea } from '../../constants/poseIdeas'
-import { PoseInspirationCard } from './PoseInspirationCard'
+import { PoseSuggestionBanner } from './PoseSuggestionBanner'
 
 interface CameraViewfinderProps {
   videoRef: RefObject<HTMLVideoElement | null>
@@ -12,8 +12,6 @@ interface CameraViewfinderProps {
   currentPose?: PoseIdea | null
   showPoseGuide?: boolean
   onNextPose?: () => void
-  onTogglePeekCamera?: () => void
-  isPeekingCamera?: boolean
   currentShotIndex?: number
   totalShots?: number
 }
@@ -24,18 +22,19 @@ export const CameraViewfinder: React.FC<CameraViewfinderProps> = ({
   countdownNumber,
   showFlash,
   currentPose,
-  showPoseGuide = false,
+  showPoseGuide = true,
   onNextPose,
-  onTogglePeekCamera,
-  isPeekingCamera = false,
   currentShotIndex = 1,
   totalShots = 4,
 }) => {
-  const isPoseActive = showPoseGuide && !isPeekingCamera && countdownNumber === null && currentPose
+  const [isBannerDismissed, setIsBannerDismissed] = useState(false)
+
+  const isCountingDown = countdownNumber !== null
+  const showSuggestion = showPoseGuide && currentPose && !isCountingDown && !isBannerDismissed
 
   return (
     <div className="relative w-full aspect-[4/3] sm:aspect-[16/10] md:aspect-[16/9] max-h-[58vh] rounded-2xl overflow-hidden bg-[#0d0c0b] border border-[#2e2821] shadow-2xl flex items-center justify-center select-none">
-      {/* 1. Live Video Feed (Always mounted in DOM to prevent video restarts) */}
+      {/* 1. Live Video Feed of the Guest (Always full screen & visible) */}
       <video
         ref={videoRef}
         autoPlay
@@ -47,7 +46,7 @@ export const CameraViewfinder: React.FC<CameraViewfinderProps> = ({
         className="w-full h-full object-cover"
       />
 
-      {/* 2. Cinematic Studio Viewfinder Framing Overlay (Shown when camera is visible) */}
+      {/* 2. Cinematic Studio Framing Brackets & Golden Ratio Guidelines */}
       <div className="absolute inset-0 pointer-events-none flex flex-col justify-between p-4 sm:p-6 z-10">
         {/* Top Framing Guidelines */}
         <div className="w-full flex justify-between items-start">
@@ -74,77 +73,64 @@ export const CameraViewfinder: React.FC<CameraViewfinderProps> = ({
       {/* Subtle Studio Lens Vignette */}
       <div className="absolute inset-0 pointer-events-none ring-1 ring-inset ring-white/10 shadow-[inset_0_0_60px_rgba(0,0,0,0.7)] z-10" />
 
-      {/* 3. POSE INSPIRATION OVERLAY (Shown before clicking shutter) */}
+      {/* 3. POSE SUGGESTION BANNER OVER LIVE CAMERA (Non-blocking text suggestion) */}
       <AnimatePresence>
-        {isPoseActive && currentPose && (
-          <motion.div
-            key={currentPose.id}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0, scale: 0.98 }}
-            transition={{ duration: 0.25 }}
-            className="absolute inset-0 z-20"
-          >
-            <PoseInspirationCard
+        {showSuggestion && currentPose && (
+          <div className="absolute bottom-3 inset-x-3 sm:inset-x-5 z-20 pointer-events-auto">
+            <PoseSuggestionBanner
               pose={currentPose}
               shotNumber={currentShotIndex}
               totalShots={totalShots}
               onShuffle={onNextPose || (() => {})}
-              onPeekCamera={onTogglePeekCamera}
+              onDismiss={() => setIsBannerDismissed(true)}
             />
-          </motion.div>
+          </div>
         )}
       </AnimatePresence>
 
-      {/* 4. CAMERA PEEK FLOATING BADGE (When guest temporarily peeks live camera before shutter) */}
-      {isPeekingCamera && showPoseGuide && countdownNumber === null && currentPose && (
-        <div className="absolute top-4 inset-x-0 mx-auto w-fit z-20">
+      {/* Optional Re-open Suggestion Pill if dismissed */}
+      {showPoseGuide && currentPose && !isCountingDown && isBannerDismissed && (
+        <div className="absolute bottom-3 right-4 z-20 pointer-events-auto">
           <button
             type="button"
-            onClick={onTogglePeekCamera}
-            className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/75 hover:bg-black/90 text-white text-xs font-mono font-medium backdrop-blur-md border border-[#ffd166]/40 shadow-xl cursor-pointer transition-transform active:scale-95"
+            onClick={() => setIsBannerDismissed(false)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/70 hover:bg-black/90 text-[#ffd166] text-xs font-mono font-medium backdrop-blur-md border border-[#ffd166]/40 shadow-lg cursor-pointer transition-transform active:scale-95"
           >
-            <EyeOff className="w-3.5 h-3.5 text-[#ffd166]" />
-            <span>Peeking Camera • Tap to view Pose Idea</span>
+            <Sparkles className="w-3.5 h-3.5 text-[#ffd166]" />
+            <span>Show Pose Suggestion</span>
           </button>
         </div>
       )}
 
-      {/* 5. FLOATING POSE MINI-GUIDE DURING COUNTDOWN (Reference reminder while guest strikes pose) */}
+      {/* 4. FLOATING POSE REMINDER PILL DURING COUNTDOWN */}
       <AnimatePresence>
-        {countdownNumber !== null && currentPose && (
+        {isCountingDown && currentPose && (
           <motion.div
-            initial={{ opacity: 0, y: -20, scale: 0.8 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.2 }}
-            className="absolute top-4 left-4 z-30 flex items-center gap-2.5 px-3 py-1.5 rounded-2xl bg-black/80 backdrop-blur-md border border-white/30 text-white shadow-2xl"
+            className="absolute top-4 inset-x-0 mx-auto w-fit z-20 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/80 backdrop-blur-md border border-white/20 text-white shadow-xl"
           >
-            <img
-              src={currentPose.imageUrl}
-              alt={currentPose.title}
-              className="w-10 h-10 rounded-lg object-cover border border-white/40 shadow-sm shrink-0"
-            />
-            <div className="flex flex-col text-left">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-[#ffd166] flex items-center gap-1">
-                <Sparkles className="w-2.5 h-2.5" /> Pose Target
-              </span>
-              <span className="text-xs font-bold font-serif leading-tight text-white drop-shadow">
-                {currentPose.title}
-              </span>
-            </div>
+            <span className="text-base">{currentPose.emoji}</span>
+            <span className="text-xs font-mono font-bold tracking-wider text-[#ffd166]">
+              STRIKE POSE:
+            </span>
+            <span className="text-xs font-sans font-semibold text-white">
+              {currentPose.title}
+            </span>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* 6. CINEMATIC COUNTDOWN OVERLAY */}
+      {/* 5. CINEMATIC COUNTDOWN OVERLAY */}
       <AnimatePresence>
         {countdownNumber !== null && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-xs pointer-events-none z-30"
+            className="absolute inset-0 flex items-center justify-center bg-black/30 backdrop-blur-xs pointer-events-none z-30"
           >
             {/* Concentric Circular Aperture Reticle */}
             <div className="relative w-44 h-44 sm:w-56 sm:h-56 flex items-center justify-center">
@@ -180,7 +166,7 @@ export const CameraViewfinder: React.FC<CameraViewfinderProps> = ({
         )}
       </AnimatePresence>
 
-      {/* 7. STUDIO FLASH / EXPOSURE EFFECT */}
+      {/* 6. STUDIO FLASH / EXPOSURE EFFECT */}
       <AnimatePresence>
         {showFlash && (
           <motion.div

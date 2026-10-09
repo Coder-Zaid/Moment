@@ -40,11 +40,10 @@ export const CameraCaptureScreen: React.FC = () => {
   const [retakeIndex, setRetakeIndex] = useState<number | null>(null)
   const [soundEnabled, setSoundEnabled] = useState(state.soundEnabled)
 
-  // Pose Inspiration state: display internet pose photo before shutter; cycle to different each time
+  // Pose suggestion state: text/emoji suggestions over live camera; cycle to different each time
   const [usedPoseIds, setUsedPoseIds] = useState<string[]>([])
   const [currentPose, setCurrentPose] = useState<PoseIdea>(() => getRandomPose([]))
   const [showPoseGuide, setShowPoseGuide] = useState(true)
-  const [isPeekingCamera, setIsPeekingCamera] = useState(false)
 
   const countdownTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
@@ -54,7 +53,7 @@ export const CameraCaptureScreen: React.FC = () => {
   const isComplete = currentPhotos.length >= requiredPhotoCount && retakeIndex === null
   const activeTargetIndex = retakeIndex !== null ? retakeIndex : currentPhotos.length
 
-  // Pick a fresh, different pose from internet poses library
+  // Pick a fresh, different pose suggestion
   const handleNextPose = () => {
     setCurrentPose((prev) => {
       const nextExcluded = [...usedPoseIds, prev.id]
@@ -63,10 +62,6 @@ export const CameraCaptureScreen: React.FC = () => {
       setUsedPoseIds((prevUsed) => [...prevUsed, prev.id])
       return candidate
     })
-  }
-
-  const handleTogglePeekCamera = () => {
-    setIsPeekingCamera((prev) => !prev)
   }
 
   // Cleanup timer on unmount
@@ -100,12 +95,11 @@ export const CameraCaptureScreen: React.FC = () => {
         addPhotos([photo])
       }
 
-      // Check if more shots remain: if yes, pick a DIFFERENT pose and show pose guide!
+      // Check if more shots remain: if yes, pick a DIFFERENT pose suggestion!
       const totalNow = currentPhotos.length + (retakeIndex === null ? 1 : 0)
       if (totalNow < requiredPhotoCount) {
         handleNextPose()
         setShowPoseGuide(true)
-        setIsPeekingCamera(false)
       } else {
         setShowPoseGuide(false)
       }
@@ -123,9 +117,8 @@ export const CameraCaptureScreen: React.FC = () => {
   const handleStartCapture = () => {
     if (cameraState !== 'ready' || isCapturing || countdownNumber !== null) return
 
-    // Immediately reveal live camera feed!
+    // Hide suggestion banner during countdown
     setShowPoseGuide(false)
-    setIsPeekingCamera(false)
 
     let count = 3
     setCountdownNumber(count)
@@ -171,7 +164,6 @@ export const CameraCaptureScreen: React.FC = () => {
     setRetakeIndex(index)
     handleNextPose()
     setShowPoseGuide(true)
-    setIsPeekingCamera(false)
   }
 
   // Render camera permission or error cards if device fails
@@ -265,8 +257,6 @@ export const CameraCaptureScreen: React.FC = () => {
           currentPose={currentPose}
           showPoseGuide={showPoseGuide && !isComplete}
           onNextPose={handleNextPose}
-          onTogglePeekCamera={handleTogglePeekCamera}
-          isPeekingCamera={isPeekingCamera}
           currentShotIndex={Math.min(activeTargetIndex + 1, requiredPhotoCount)}
           totalShots={requiredPhotoCount}
         />
