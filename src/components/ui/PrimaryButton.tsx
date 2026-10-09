@@ -3,7 +3,7 @@ import { motion, useReducedMotion } from 'framer-motion'
 import { ScallopBorder } from '../decorations/ScallopBorder'
 
 export type ButtonVariant = 'cream' | 'bronze' | 'dark' | 'outline' | 'terracotta'
-export type ButtonSize = 'md' | 'lg' | 'xl'
+export type ButtonSize = 'sm' | 'md' | 'lg' | 'xl'
 
 interface PrimaryButtonProps {
   children: ReactNode
@@ -50,6 +50,7 @@ export const PrimaryButton: React.FC<PrimaryButtonProps> = ({
   }
 
   const sizeStyles: Record<ButtonSize, string> = {
+    sm: 'min-h-[40px] px-3.5 py-2 text-xs tracking-wider',
     md: 'min-h-[48px] px-6 py-2.5 text-sm tracking-wider',
     lg: 'min-h-[58px] px-8 py-3.5 text-base tracking-widest',
     xl: 'min-h-[66px] px-10 py-4 text-lg tracking-widest',

@@ -49,24 +49,24 @@ export const FilmPreviewScreen: React.FC = () => {
   }
 
   return (
-    <div className="flex-1 flex flex-col justify-between max-w-6xl mx-auto w-full px-2 sm:px-4 py-2 sm:py-4">
+    <div className="flex-1 h-full max-h-full flex flex-col justify-between w-full px-2 py-0.5 sm:py-1 select-none overflow-hidden">
       {/* Top Header */}
-      <div className="flex items-center justify-between gap-4 mb-3 sm:mb-6">
+      <div className="flex items-center justify-between gap-2 mb-1 shrink-0">
         <BackButton
           onClick={() => navigate('PHOTO_EDIT')}
           label="BACK"
         />
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           <span
-            className={`font-serif text-xl sm:text-2xl tracking-wider uppercase font-semibold ${
+            className={`font-serif text-lg sm:text-xl tracking-wider uppercase font-semibold ${
               isLight ? 'text-stone-900' : 'text-[#faf6f0]'
             }`}
           >
             FILM PREVIEW
           </span>
           <span
-            className={`px-2 py-0.5 rounded-full border text-[10px] font-mono tracking-wider uppercase ${
+            className={`px-1.5 py-0.2 rounded-full border text-[9px] font-mono tracking-wider uppercase ${
               isLight
                 ? 'bg-stone-100 border-stone-300 text-[#b87d4b]'
                 : 'bg-[#241f19] border-[#3e3528] text-[#ffd166]'
@@ -76,28 +76,28 @@ export const FilmPreviewScreen: React.FC = () => {
           </span>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           <span
-            className={`hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full border text-[11px] font-mono uppercase tracking-widest ${
+            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[9px] font-mono uppercase tracking-widest ${
               isLight
                 ? 'bg-stone-100 border-stone-300 text-[#b87d4b]'
                 : 'bg-[#1b1713] border-[#332b22] text-[#ffd166]'
             }`}
           >
-            <Check className="w-3.5 h-3.5" />
+            <Check className="w-3 h-3" />
             READY
           </span>
         </div>
       </div>
 
       {/* Main Studio Preview Stage */}
-      <div className="my-auto flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-14 py-4">
+      <div className="my-auto flex flex-col items-center justify-center gap-2 sm:gap-3 py-1 overflow-hidden shrink">
         {/* Left / Center: Photorealistic Physical Strip Presentation */}
         <motion.div
-          initial={{ opacity: 0, y: 24, scale: 0.94 }}
+          initial={{ opacity: 0, y: 15, scale: 0.94 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
-          className="relative flex flex-col items-center justify-center"
+          transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+          className="relative flex flex-col items-center justify-center shrink"
         >
           {/* Subtle Ambient Backlight Glow */}
           <div className="absolute inset-0 bg-gradient-to-tr from-[#b87d4b]/15 via-transparent to-[#e8d5be]/10 blur-3xl rounded-full scale-110 pointer-events-none" />
@@ -131,7 +131,7 @@ export const FilmPreviewScreen: React.FC = () => {
               filterId={state.selectedFilter}
               frameId={state.selectedFrame}
               elevation="floating"
-              size="lg"
+              size="xs"
               showBrand={true}
               tiltAngle={shouldReduceMotion ? 0 : -0.75}
               className="shadow-2xl shadow-black/80"
@@ -139,7 +139,7 @@ export const FilmPreviewScreen: React.FC = () => {
           </div>
 
           <p
-            className={`font-serif text-xs sm:text-sm tracking-wider uppercase mt-3 font-medium ${
+            className={`font-serif text-[11px] sm:text-xs tracking-wider uppercase mt-1.5 font-medium ${
               isLight ? 'text-stone-700' : 'text-[#ffd166]'
             }`}
           >
@@ -147,95 +147,19 @@ export const FilmPreviewScreen: React.FC = () => {
           </p>
         </motion.div>
 
-        {/* Right Pane: Composition Specs & Action Rail */}
+        {/* Action Controls */}
         <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.55, delay: 0.1 }}
-          className="flex flex-col items-center lg:items-start text-center lg:text-left max-w-md w-full"
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, delay: 0.1 }}
+          className="flex flex-col items-center max-w-sm w-full px-2 shrink-0"
         >
-          <div
-            className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border text-[11px] font-mono tracking-widest uppercase mb-3 ${
-              isLight
-                ? 'bg-stone-100 border-stone-300 text-[#b87d4b]'
-                : 'bg-[#181512] border-[#2d261e] text-[#ffd166]'
-            }`}
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            FINAL FILM INSPECTION
-          </div>
-
-          <h1
-            className={`font-serif text-3xl sm:text-4xl tracking-wide mb-2 ${
-              isLight ? 'text-stone-900' : 'text-[#faf6f0]'
-            }`}
-          >
-            Your Heirloom Strip
-          </h1>
-          <p
-            className={`text-sm leading-relaxed mb-6 ${
-              isLight ? 'text-stone-600' : 'text-[#c4baa8]'
-            }`}
-          >
-            Review your finished {formatConfig.name.toLowerCase()} before it enters
-            the darkroom development sequence and printer emulation.
-          </p>
-
-          {/* Composition Metadata Badges */}
-          <div className="w-full grid grid-cols-2 gap-2.5 mb-4 text-left">
-            <div
-              className={`p-3 rounded-xl border ${
-                isLight
-                  ? 'bg-white/80 border-stone-200'
-                  : 'bg-[#181512]/90 border-[#332b22]'
-              }`}
-            >
-              <div
-                className={`text-[10px] font-mono uppercase tracking-widest mb-0.5 ${
-                  isLight ? 'text-stone-500' : 'text-[#a89d8d]'
-                }`}
-              >
-                PAPER MOUNT
-              </div>
-              <div
-                className={`text-sm font-medium ${
-                  isLight ? 'text-stone-900' : 'text-[#f0e8dc]'
-                }`}
-              >
-                {activeFrame.label}
-              </div>
-            </div>
-
-            <div
-              className={`p-3 rounded-xl border ${
-                isLight
-                  ? 'bg-white/80 border-stone-200'
-                  : 'bg-[#181512]/90 border-[#332b22]'
-              }`}
-            >
-              <div
-                className={`text-[10px] font-mono uppercase tracking-widest mb-0.5 ${
-                  isLight ? 'text-stone-500' : 'text-[#a89d8d]'
-                }`}
-              >
-                COLOR GRADE
-              </div>
-              <div
-                className={`text-sm font-medium ${
-                  isLight ? 'text-stone-900' : 'text-[#f0e8dc]'
-                }`}
-              >
-                {activeFilter.label}
-              </div>
-            </div>
-          </div>
-
-          {/* Quick Modifier Action Pills (matching reference board) */}
-          <div className="w-full flex flex-wrap gap-2.5 mb-4">
+          {/* Quick Modifier Action Pills */}
+          <div className="w-full flex gap-1.5 mb-2">
             <button
               type="button"
               onClick={() => navigate('PHOTO_EDIT')}
-              className={`flex-1 py-2 px-3 rounded-xl border text-xs font-mono tracking-wider uppercase transition-all cursor-pointer text-center ${
+              className={`flex-1 py-1.5 px-2 rounded-lg border text-[10px] font-mono tracking-wider uppercase transition-all cursor-pointer text-center ${
                 isLight
                   ? 'bg-stone-100 hover:bg-stone-200 border-stone-300 text-stone-800'
                   : 'bg-[#1c1814] hover:bg-[#28221b] border-[#3b3125] text-[#ffd166]'
@@ -246,40 +170,42 @@ export const FilmPreviewScreen: React.FC = () => {
             <button
               type="button"
               onClick={handleCycleFrame}
-              className={`flex-1 py-2 px-3 rounded-xl border text-xs font-mono tracking-wider uppercase transition-all cursor-pointer text-center ${
+              className={`flex-1 py-1.5 px-2 rounded-lg border text-[9px] font-mono tracking-wider uppercase transition-all cursor-pointer text-center truncate ${
                 isLight
                   ? 'bg-stone-100 hover:bg-stone-200 border-stone-300 text-stone-800'
                   : 'bg-[#1c1814] hover:bg-[#28221b] border-[#3b3125] text-[#ffd166]'
               }`}
+              title={`Active Frame: ${activeFrame.label}. Click to cycle.`}
             >
-              CHANGE FRAME
+              FRAME: {activeFrame.label.split(' ')[0]}
             </button>
             <button
               type="button"
               onClick={handleCycleFilter}
-              className={`flex-1 py-2 px-3 rounded-xl border text-xs font-mono tracking-wider uppercase transition-all cursor-pointer text-center ${
+              className={`flex-1 py-1.5 px-2 rounded-lg border text-[9px] font-mono tracking-wider uppercase transition-all cursor-pointer text-center truncate ${
                 isLight
                   ? 'bg-stone-100 hover:bg-stone-200 border-stone-300 text-stone-800'
                   : 'bg-[#1c1814] hover:bg-[#28221b] border-[#3b3125] text-[#ffd166]'
               }`}
+              title={`Active Filter: ${activeFilter.label}. Click to cycle.`}
             >
-              CHANGE FILTER
+              GRADE: {activeFilter.label.split(' ')[0]}
             </button>
           </div>
 
           {/* Primary Action Button: PRINT */}
-          <div className="w-full pt-1">
+          <div className="w-full">
             <PrimaryButton
               variant="terracotta"
-              size="lg"
+              size="sm"
               scalloped={true}
               scallopColor={isLight ? '#382f25' : '#ffd166'}
               onClick={handleProceedToGenerate}
               disabled={isTransitioning}
-              icon={<Sparkles className="w-4 h-4" />}
-              className="w-full justify-center tracking-widest font-semibold"
+              icon={<Sparkles className="w-3.5 h-3.5" />}
+              className="w-full justify-center tracking-widest font-semibold py-2"
             >
-              {isTransitioning ? 'PREPARING...' : 'PRINT'}
+              {isTransitioning ? 'PREPARING...' : 'PRINT PHOTO STRIP'}
             </PrimaryButton>
           </div>
         </motion.div>

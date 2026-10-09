@@ -1,7 +1,7 @@
 import React, { type ReactNode } from 'react'
 import { usePhotobooth } from '../../context/PhotoboothContext'
 import type { ScreenState } from '../../types/photobooth'
-import { Monitor, RotateCcw, Sun, Moon } from 'lucide-react'
+import { Monitor, RotateCcw, Sun, Moon, Smartphone } from 'lucide-react'
 
 interface AppShellProps {
   children: ReactNode
@@ -10,6 +10,17 @@ interface AppShellProps {
 export const AppShell: React.FC<AppShellProps> = ({ children }) => {
   const { state, navigate, resetSession, toggleKioskMode, toggleTheme } = usePhotobooth()
   const isLight = state.theme === 'light'
+
+  // Kiosk Aspect Ratio: default to authentic 9:16 portrait photo-booth kiosk display
+  const [kioskRatio, setKioskRatio] = React.useState<'9:16' | '3:4' | 'fill'>('9:16')
+
+  const cycleKioskRatio = () => {
+    setKioskRatio((prev) => {
+      if (prev === '9:16') return '3:4'
+      if (prev === '3:4') return 'fill'
+      return '9:16'
+    })
+  }
 
   // Developer quick-navigation screens for verifying all workflow states in development
   const allScreens: ScreenState[] = [
@@ -27,8 +38,8 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
   return (
     <div
       data-theme={state.theme}
-      className={`relative min-h-[100dvh] w-full flex flex-col transition-colors duration-300 overflow-x-hidden ${
-        isLight ? 'bg-[#f7f4ee] text-[#1a1714]' : 'dark bg-[#0b0a09] text-[#f4efe6]'
+      className={`relative h-[100dvh] max-h-[100dvh] w-full flex flex-col items-center justify-center transition-colors duration-300 overflow-hidden select-none ${
+        isLight ? 'bg-[#ede7db] text-[#1a1714]' : 'dark bg-[#060505] text-[#f4efe6]'
       }`}
     >
       {/* Cinematic Background Atmosphere: Dedicated Photo Booth Studio Wallpaper & Ambient Glow */}
@@ -85,152 +96,194 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
         )}
       </div>
 
-      {/* Discreet Developer / Kiosk Diagnostic Top Ribbon (Can be toggled or clicked) */}
-      <header
-        className={`sticky top-0 z-50 w-full px-4 sm:px-6 py-2 flex items-center justify-between border-b backdrop-blur-md text-[11px] transition-colors shadow-sm ${
+      {/* Physical Photo Booth Kiosk Enclosure / Aspect Ratio Frame */}
+      <div
+        className={`relative z-10 flex flex-col h-full max-h-[100dvh] w-full overflow-hidden transition-all duration-300 ${
+          kioskRatio === '9:16'
+            ? 'max-w-[min(100vw,calc(100dvh*(9/16)))] sm:aspect-[9/16] sm:rounded-[26px] sm:border sm:shadow-[0_25px_70px_-15px_rgba(0,0,0,0.85)]'
+            : kioskRatio === '3:4'
+            ? 'max-w-[min(100vw,calc(100dvh*(3/4)))] sm:aspect-[3/4] sm:rounded-[24px] sm:border sm:shadow-[0_25px_70px_-15px_rgba(0,0,0,0.85)]'
+            : 'max-w-full'
+        } ${
           isLight
-            ? 'border-[#e4dcce] bg-[#ffffff]/90 text-[#6b6154]'
-            : 'border-[#201d19]/80 bg-[#0e0d0b]/90 text-[#a09485]'
+            ? 'bg-[#f7f4ee] border-[#dfd6c8]/80 text-[#1a1714]'
+            : 'bg-[#0b0a09] border-[#2c261e]/80 text-[#f4efe6]'
         }`}
       >
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={resetSession}
-            title="Reset Photobooth Session"
-            className="flex items-center gap-1.5 hover:opacity-80 transition-opacity cursor-pointer touch-press"
-            aria-label="Reset Photobooth Session"
-          >
-            <div className="w-2 h-2 rounded-full bg-[#b87d4b] animate-pulse" />
-            <span
-              className={`font-serif tracking-widest font-bold ${
-                isLight ? 'text-[#241e18]' : 'text-[#d8cebe]'
-              }`}
-            >
-              MOMENT
-            </span>
-            <span
-              className={`text-[10px] tracking-wider uppercase ${
-                isLight ? 'text-[#8c8072]' : 'text-[#786e62]'
-              }`}
-            >
-              KIOSK
-            </span>
-          </button>
-        </div>
-
-        {/* Center: Sleek Kiosk Status in Production or Workflow Switcher in Development */}
-        {state.isKioskMode ? (
-          <div
-            className={`hidden sm:flex items-center gap-2 text-[10px] uppercase tracking-widest font-mono ${
-              isLight ? 'text-[#6b6154]' : 'text-[#948777]'
-            }`}
-          >
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#b87d4b]" />
-            <span>TOUCHSCREEN KIOSK • 300 DPI ARCHIVAL FILM</span>
-          </div>
-        ) : (
-          <div className="hidden lg:flex items-center gap-1 overflow-x-auto py-0.5">
-            <span
-              className={`text-[10px] uppercase tracking-wider mr-1 ${
-                isLight ? 'text-[#8c8072]' : 'text-[#6b6256]'
-              }`}
-            >
-              Phase:
-            </span>
-            {allScreens.map((screen) => {
-              const isActive = state.currentScreen === screen
-              return (
-                <button
-                  key={screen}
-                  type="button"
-                  onClick={() => navigate(screen)}
-                  className={`px-2 py-0.5 rounded text-[10px] tracking-wider uppercase transition-colors cursor-pointer ${
-                    isActive
-                      ? 'bg-[#b87d4b] text-[#140e08] font-semibold'
-                      : isLight
-                        ? 'text-[#6b6154] hover:text-[#191612] hover:bg-[#ede5d8]'
-                        : 'text-[#877c6e] hover:text-[#f4efe6] hover:bg-[#1f1c18]'
-                  }`}
-                >
-                  {screen.replace('_', ' ')}
-                </button>
-              )
-            })}
+        {/* Kiosk Hardware Top Bezel (Discreet camera pinhole & hardware sensor bar on desktop view) */}
+        {kioskRatio !== 'fill' && (
+          <div className="hidden sm:flex items-center justify-center py-1 gap-2.5 opacity-40 shrink-0 pointer-events-none select-none">
+            <span className="w-2 h-2 rounded-full bg-stone-700 dark:bg-stone-400/60 ring-1 ring-white/10" />
+            <span className="w-10 h-1 rounded-full bg-stone-600/50 dark:bg-stone-500/40" />
+            <span className="w-1.5 h-1.5 rounded-full bg-stone-700/60 dark:bg-stone-400/40" />
           </div>
         )}
 
-        {/* Right side controls: Theme toggle, Reset & Kiosk mode */}
-        <div className="flex items-center gap-2">
-          {/* Light / Dark Mode Toggle */}
-          <button
-            type="button"
-            onClick={toggleTheme}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border transition-all cursor-pointer touch-press ${
-              isLight
-                ? 'bg-[#f4efe6] border-[#dfd6c8] text-[#1a1714] hover:bg-[#eae3d5]'
-                : 'bg-[#141210] border-[#26211a] text-[#f4efe6] hover:bg-[#1f1c18]'
-            }`}
-            title={isLight ? 'Switch to Dark Studio Mode' : 'Switch to Archival Warm Paper Light Mode'}
-            aria-label="Toggle Theme"
-          >
-            {isLight ? (
-              <>
-                <Moon className="w-3 h-3 text-[#8a5223]" />
-                <span className="hidden sm:inline text-[10px] uppercase tracking-wider font-medium text-[#4a3f31]">
-                  Dark
-                </span>
-              </>
-            ) : (
-              <>
-                <Sun className="w-3 h-3 text-[#d89f68]" />
-                <span className="hidden sm:inline text-[10px] uppercase tracking-wider font-medium text-[#d8cebe]">
-                  Light
-                </span>
-              </>
-            )}
-          </button>
+        {/* Discreet Developer / Kiosk Diagnostic Top Ribbon */}
+        <header
+          className={`sticky top-0 z-50 w-full px-3 sm:px-4 py-1.5 flex items-center justify-between border-b backdrop-blur-md text-[11px] transition-colors shadow-sm shrink-0 ${
+            isLight
+              ? 'border-[#e4dcce] bg-[#ffffff]/92 text-[#6b6154]'
+              : 'border-[#201d19]/80 bg-[#0e0d0b]/92 text-[#a09485]'
+          }`}
+        >
+          <div className="flex items-center gap-2.5">
+            <button
+              type="button"
+              onClick={resetSession}
+              title="Reset Photobooth Session"
+              className="flex items-center gap-1.5 hover:opacity-80 transition-opacity cursor-pointer touch-press"
+              aria-label="Reset Photobooth Session"
+            >
+              <div className="w-2 h-2 rounded-full bg-[#b87d4b] animate-pulse" />
+              <span
+                className={`font-serif tracking-widest font-bold ${
+                  isLight ? 'text-[#241e18]' : 'text-[#d8cebe]'
+                }`}
+              >
+                MOMENT
+              </span>
+              <span
+                className={`text-[9px] tracking-wider uppercase font-mono ${
+                  isLight ? 'text-[#8c8072]' : 'text-[#786e62]'
+                }`}
+              >
+                KIOSK
+              </span>
+            </button>
+          </div>
 
-          <button
-            type="button"
-            onClick={resetSession}
-            className={`flex items-center gap-1 px-2.5 py-1 rounded-lg border transition-colors cursor-pointer touch-press ${
-              isLight
-                ? 'bg-[#ffffff] border-[#dfd6c8] text-[#4a3f31] hover:bg-[#f4efe6]'
-                : 'bg-[#141210] border-[#26211a] hover:bg-[#1f1c18] hover:text-[#f4efe6]'
-            }`}
-            title="Reset Kiosk State (Start Fresh Session)"
-            aria-label="Start fresh session"
-          >
-            <RotateCcw className="w-3 h-3 text-[#b87d4b]" />
-            <span className="hidden sm:inline text-[10px] uppercase tracking-wider">Reset</span>
-          </button>
+          {/* Center: Sleek Kiosk Status in Production or Workflow Switcher in Development */}
+          {state.isKioskMode ? (
+            <div
+              className={`hidden sm:flex items-center gap-2 text-[10px] uppercase tracking-widest font-mono ${
+                isLight ? 'text-[#6b6154]' : 'text-[#948777]'
+              }`}
+            >
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#b87d4b]" />
+              <span>TOUCHSCREEN KIOSK • 300 DPI</span>
+            </div>
+          ) : (
+            <div className="hidden md:flex items-center gap-1 overflow-x-auto py-0.5">
+              <span
+                className={`text-[9px] uppercase tracking-wider mr-0.5 ${
+                  isLight ? 'text-[#8c8072]' : 'text-[#6b6256]'
+                }`}
+              >
+                Phase:
+              </span>
+              {allScreens.map((screen) => {
+                const isActive = state.currentScreen === screen
+                return (
+                  <button
+                    key={screen}
+                    type="button"
+                    onClick={() => navigate(screen)}
+                    className={`px-1.5 py-0.5 rounded text-[9px] tracking-wider uppercase transition-colors cursor-pointer ${
+                      isActive
+                        ? 'bg-[#b87d4b] text-[#140e08] font-bold'
+                        : isLight
+                          ? 'text-[#6b6154] hover:text-[#191612] hover:bg-[#ede5d8]'
+                          : 'text-[#877c6e] hover:text-[#f4efe6] hover:bg-[#1f1c18]'
+                    }`}
+                  >
+                    {screen.replace('_', ' ')}
+                  </button>
+                )
+              })}
+            </div>
+          )}
 
-          <button
-            type="button"
-            onClick={toggleKioskMode}
-            className={`flex items-center gap-1 px-2.5 py-1 rounded-lg border transition-colors cursor-pointer touch-press ${
-              state.isKioskMode
-                ? 'bg-[#b87d4b]/20 border-[#b87d4b]/50 text-[#b87d4b]'
-                : isLight
+          {/* Right side controls: Aspect Ratio, Theme toggle, Reset & Kiosk mode */}
+          <div className="flex items-center gap-1.5">
+            {/* Kiosk Aspect Ratio Selector */}
+            <button
+              type="button"
+              onClick={cycleKioskRatio}
+              className={`flex items-center gap-1 px-2 py-0.5 rounded-lg border transition-all cursor-pointer touch-press ${
+                isLight
+                  ? 'bg-[#f4efe6] border-[#dfd6c8] text-[#1a1714] hover:bg-[#eae3d5]'
+                  : 'bg-[#141210] border-[#26211a] text-[#ffd166] hover:bg-[#1f1c18]'
+              }`}
+              title={`Kiosk Aspect Ratio: ${kioskRatio}. Tap to toggle (9:16 / 3:4 / Full).`}
+              aria-label="Toggle Kiosk Aspect Ratio"
+            >
+              <Smartphone className="w-3 h-3 text-[#b87d4b]" />
+              <span className="text-[9px] uppercase font-mono tracking-wider font-bold">
+                {kioskRatio === 'fill' ? 'FULL' : kioskRatio}
+              </span>
+            </button>
+
+            {/* Light / Dark Mode Toggle */}
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className={`flex items-center gap-1 px-2 py-0.5 rounded-lg border transition-all cursor-pointer touch-press ${
+                isLight
+                  ? 'bg-[#f4efe6] border-[#dfd6c8] text-[#1a1714] hover:bg-[#eae3d5]'
+                  : 'bg-[#141210] border-[#26211a] text-[#f4efe6] hover:bg-[#1f1c18]'
+              }`}
+              title={isLight ? 'Switch to Dark Studio Mode' : 'Switch to Archival Warm Paper Light Mode'}
+              aria-label="Toggle Theme"
+            >
+              {isLight ? (
+                <>
+                  <Moon className="w-3 h-3 text-[#8a5223]" />
+                  <span className="hidden sm:inline text-[9px] uppercase tracking-wider font-medium text-[#4a3f31]">
+                    Dark
+                  </span>
+                </>
+              ) : (
+                <>
+                  <Sun className="w-3 h-3 text-[#d89f68]" />
+                  <span className="hidden sm:inline text-[9px] uppercase tracking-wider font-medium text-[#d8cebe]">
+                    Light
+                  </span>
+                </>
+              )}
+            </button>
+
+            <button
+              type="button"
+              onClick={resetSession}
+              className={`flex items-center gap-1 px-2 py-0.5 rounded-lg border transition-colors cursor-pointer touch-press ${
+                isLight
                   ? 'bg-[#ffffff] border-[#dfd6c8] text-[#4a3f31] hover:bg-[#f4efe6]'
-                  : 'bg-[#141210] border-[#26211a] hover:bg-[#1f1c18]'
-            }`}
-            title="Toggle Kiosk Fullscreen Mode (Ctrl+K)"
-            aria-label="Toggle Kiosk Mode"
-          >
-            <Monitor className="w-3 h-3" />
-            <span className="hidden sm:inline text-[10px] uppercase tracking-wider">
-              {state.isKioskMode ? 'Kiosk On' : 'Kiosk'}
-            </span>
-          </button>
-        </div>
-      </header>
+                  : 'bg-[#141210] border-[#26211a] hover:bg-[#1f1c18] hover:text-[#f4efe6]'
+              }`}
+              title="Reset Kiosk State (Start Fresh Session)"
+              aria-label="Start fresh session"
+            >
+              <RotateCcw className="w-3 h-3 text-[#b87d4b]" />
+              <span className="hidden sm:inline text-[9px] uppercase tracking-wider">Reset</span>
+            </button>
 
-      {/* Main Kiosk Content Area */}
-      <main className="relative z-10 flex-1 flex flex-col w-full max-w-6xl mx-auto px-4 sm:px-6 md:px-8 py-4 sm:py-6">
-        {children}
-      </main>
+            <button
+              type="button"
+              onClick={toggleKioskMode}
+              className={`flex items-center gap-1 px-2 py-0.5 rounded-lg border transition-colors cursor-pointer touch-press ${
+                state.isKioskMode
+                  ? 'bg-[#b87d4b]/20 border-[#b87d4b]/50 text-[#b87d4b]'
+                  : isLight
+                    ? 'bg-[#ffffff] border-[#dfd6c8] text-[#4a3f31] hover:bg-[#f4efe6]'
+                    : 'bg-[#141210] border-[#26211a] hover:bg-[#1f1c18]'
+              }`}
+              title="Toggle Kiosk Fullscreen Mode (Ctrl+K)"
+              aria-label="Toggle Kiosk Mode"
+            >
+              <Monitor className="w-3 h-3" />
+              <span className="hidden sm:inline text-[9px] uppercase tracking-wider">
+                {state.isKioskMode ? 'Kiosk On' : 'Kiosk'}
+              </span>
+            </button>
+          </div>
+        </header>
+
+        {/* Main Kiosk Content Area: Strictly Contained to Kiosk Height with Zero Scrolling */}
+        <main className="relative z-10 flex-1 h-[calc(100%-38px)] max-h-[calc(100%-38px)] overflow-hidden flex flex-col w-full px-2.5 sm:px-3 py-1 sm:py-2">
+          {children}
+        </main>
+      </div>
     </div>
   )
 }

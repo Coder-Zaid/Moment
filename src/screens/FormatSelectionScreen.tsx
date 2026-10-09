@@ -29,7 +29,7 @@ export const FormatSelectionScreen: React.FC = () => {
   const isCamera = state.mode === 'camera'
 
   return (
-    <div className="flex-1 flex flex-col justify-between max-w-4xl mx-auto w-full py-1 sm:py-2 select-none h-full">
+    <div className="flex-1 h-full max-h-full flex flex-col justify-between w-full py-0.5 sm:py-1 select-none overflow-hidden">
       {/* 1. TOP HEADER & NAVIGATION */}
       <header className="flex items-center justify-between gap-3 pb-2 border-b border-[#24201b]/80 z-20">
         <BackButton onClick={() => navigate('MODE_SELECTION')} />

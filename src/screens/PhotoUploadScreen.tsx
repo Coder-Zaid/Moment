@@ -27,7 +27,7 @@ export const PhotoUploadScreen: React.FC = () => {
 
   const [validationError, setValidationError] = useState<string | null>(null)
   const [toastMessage, setToastMessage] = useState<string | null>(null)
-
+  const [activeTab, setActiveTab] = useState<'upload' | 'strip'>('upload')
 
   const formatConfig = FILM_FORMATS[state.selectedFormat]
   const currentPhotos = state.photos
@@ -103,23 +103,18 @@ export const PhotoUploadScreen: React.FC = () => {
   }
 
   return (
-    <div className="flex-1 flex flex-col justify-between max-w-6xl mx-auto w-full py-2 sm:py-4 select-none">
+    <div className="flex-1 h-full max-h-full flex flex-col justify-between w-full py-0.5 sm:py-1 select-none overflow-hidden">
       {/* 1. TOP HEADER & KIOSK STATUS */}
-      <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#24201b]">
-        <div className="flex items-center gap-3">
+      <header className="flex items-center justify-between gap-2 pb-1.5 border-b border-[#24201b] shrink-0">
+        <div className="flex items-center gap-2">
           <BackButton onClick={() => navigate('FORMAT_SELECTION')} />
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="font-serif text-xl sm:text-2xl text-[#f4efe6] tracking-wider font-medium">
-                UPLOAD PHOTOS
-              </span>
-              <span className="px-2 py-0.5 rounded-full bg-[#241f19] border border-[#3e3528] text-[10px] font-mono tracking-wider text-[#b87d4b] uppercase">
-                {formatConfig.name}
-              </span>
-            </div>
-            <p className="text-xs text-[#a09483] tracking-wide mt-0.5">
-              Curate your photos in the final print sequence
-            </p>
+          <div className="flex items-center gap-1.5">
+            <span className="font-serif text-lg sm:text-xl text-[#f4efe6] tracking-wider font-medium">
+              UPLOAD PHOTOS
+            </span>
+            <span className="px-1.5 py-0.2 rounded-full bg-[#241f19] border border-[#3e3528] text-[9px] font-mono tracking-wider text-[#b87d4b] uppercase">
+              {formatConfig.name}
+            </span>
           </div>
         </div>
 
@@ -128,13 +123,39 @@ export const PhotoUploadScreen: React.FC = () => {
           <button
             type="button"
             onClick={clearPhotos}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#1c1815] hover:bg-[#2a221b] text-xs text-[#a89d8d] hover:text-[#f4efe6] border border-[#332a20] transition-colors cursor-pointer self-start sm:self-auto"
+            className="flex items-center gap-1 px-2 py-1 rounded-lg bg-[#1c1815] hover:bg-[#2a221b] text-[10px] text-[#a89d8d] hover:text-[#f4efe6] border border-[#332a20] transition-colors cursor-pointer"
           >
-            <Trash2 className="w-3.5 h-3.5 text-[#8c3527]" />
-            <span className="uppercase tracking-wider">Reset Frames</span>
+            <Trash2 className="w-3 h-3 text-[#8c3527]" />
+            <span className="uppercase tracking-wider">Reset</span>
           </button>
         )}
       </header>
+
+      {/* Responsive View Switcher for Narrow Kiosk Displays */}
+      <div className="flex lg:hidden items-center justify-center gap-1.5 py-1 shrink-0">
+        <button
+          type="button"
+          onClick={() => setActiveTab('upload')}
+          className={`flex items-center gap-1 px-3 py-1 rounded-lg text-[10px] font-mono uppercase tracking-wider border cursor-pointer ${
+            activeTab === 'upload'
+              ? 'bg-[#b87d4b] text-[#140e08] font-bold border-[#c98e5a] shadow'
+              : 'bg-[#181512] text-[#c2b6a5] border-[#30271e]'
+          }`}
+        >
+          <span>Frames ({currentPhotos.length}/{requiredPhotoCount})</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab('strip')}
+          className={`flex items-center gap-1 px-3 py-1 rounded-lg text-[10px] font-mono uppercase tracking-wider border cursor-pointer ${
+            activeTab === 'strip'
+              ? 'bg-[#b87d4b] text-[#140e08] font-bold border-[#c98e5a] shadow'
+              : 'bg-[#181512] text-[#c2b6a5] border-[#30271e]'
+          }`}
+        >
+          <span>Live Strip</span>
+        </button>
+      </div>
 
       {/* 2. PROGRESS BANNER */}
       <div className="my-3 p-3.5 rounded-xl bg-[#161411] border border-[#2c261e] flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
@@ -201,13 +222,17 @@ export const PhotoUploadScreen: React.FC = () => {
       )}
 
       {/* 3. WORKSPACE: INTERACTIVE SLOTS & LIVE PHYSICAL FILM STRIP */}
-      <div className="my-auto grid grid-cols-1 lg:grid-cols-12 gap-6 items-start py-2">
+      <div className="my-auto grid grid-cols-1 lg:grid-cols-12 gap-3 items-start py-1 overflow-hidden shrink">
         {/* Left Section: Photo Uploader & Interactive Sequence Slots (col 8) */}
-        <div className="lg:col-span-8 flex flex-col gap-4">
+        <div
+          className={`lg:col-span-8 flex flex-col gap-2.5 w-full ${
+            activeTab === 'upload' ? 'flex' : 'hidden lg:flex'
+          }`}
+        >
           {/* Quick Bulk Intake Dropzone with Washi Accent */}
           <div className="relative">
             <div className="absolute -top-3.5 right-6 z-20 pointer-events-none">
-              <WashiTape angle={4} width="w-20" pattern="translucent" />
+              <WashiTape angle={4} width="w-16" pattern="translucent" />
             </div>
             <PhotoUploader
               onPhotosProcessed={handleBulkPhotos}
@@ -219,23 +244,23 @@ export const PhotoUploadScreen: React.FC = () => {
 
           {/* Sequential Photo Slots Grid */}
           <div className="relative">
-            <div className="flex items-center justify-between mb-2 px-1">
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] font-mono tracking-widest text-[#a89d8d] uppercase">
+            <div className="flex items-center justify-between mb-1 px-1">
+              <div className="flex items-center gap-1.5">
+                <span className="text-[9px] font-mono tracking-widest text-[#a89d8d] uppercase">
                   CONTACT SHEET CELLS
                 </span>
                 <Sticker text="TAKE 01" variant="tag" color="cream" rotation={-2} />
               </div>
               <HandwrittenNote
-                text="drag or tap to organize ✨"
+                text="tap or drag ✨"
                 size="sm"
                 color="text-[#d4ba9f]"
               />
             </div>
 
             <div
-              className={`grid gap-3.5 sm:gap-4 ${
-                requiredPhotoCount === 2 ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1 sm:grid-cols-2'
+              className={`grid gap-2 sm:gap-3 ${
+                requiredPhotoCount === 2 ? 'grid-cols-2' : 'grid-cols-2'
               }`}
             >
               {Array.from({ length: requiredPhotoCount }).map((_, index) => {
@@ -267,60 +292,64 @@ export const PhotoUploadScreen: React.FC = () => {
         </div>
 
         {/* Right Section: Live Physical Film Strip Preview (col 4) */}
-        <div className="lg:col-span-4 flex flex-col items-center justify-center p-4 rounded-2xl bg-[#141210]/60 border border-[#2b251f] relative">
+        <div
+          className={`lg:col-span-4 flex flex-col items-center justify-center p-3 rounded-2xl bg-[#141210]/60 border border-[#2b251f] relative w-full ${
+            activeTab === 'strip' ? 'flex' : 'hidden lg:flex'
+          }`}
+        >
           {/* Washi Tape Pinning Preview Panel */}
-          <div className="absolute -top-3.5 inset-x-0 flex justify-center z-20 pointer-events-none">
-            <WashiTape angle={-1} width="w-24" pattern="stripes" />
+          <div className="absolute -top-3 inset-x-0 flex justify-center z-20 pointer-events-none">
+            <WashiTape angle={-1} width="w-20" pattern="stripes" />
           </div>
 
-          <div className="w-full flex items-center justify-between mb-3 px-1">
-            <span className="text-[11px] font-mono tracking-widest text-[#a89d8d] uppercase">
+          <div className="w-full flex items-center justify-between mb-1.5 px-1">
+            <span className="text-[10px] font-mono tracking-widest text-[#a89d8d] uppercase">
               Live Strip Preview
             </span>
-            <span className="text-[10px] font-mono tracking-wider text-[#b87d4b]">
+            <span className="text-[9px] font-mono tracking-wider text-[#b87d4b]">
               {formatConfig.aspectRatio}
             </span>
           </div>
 
-          {/* Physical Film Strip rendering actual local uploaded photos! */}
-          <div className="relative py-2 flex items-center justify-center">
+          {/* Physical Film Strip rendering actual local uploaded photos */}
+          <div className="relative py-1 flex items-center justify-center">
             <FilmStrip
               format={state.selectedFormat}
               photos={currentPhotos}
               filterId="original"
               elevation="floating"
-              size="sm"
+              size="xs"
               showBrand={true}
               className="ring-1 ring-white/10"
             />
           </div>
 
-          <p className="text-[10px] text-[#786e61] text-center mt-3 tracking-wide">
+          <p className="text-[9px] text-[#786e61] text-center mt-2 tracking-wide">
             Your photos will print in this exact vertical sequence
           </p>
         </div>
       </div>
 
       {/* 4. FOOTER CONTROLS */}
-      <footer className="flex items-center justify-between gap-4 pt-4 border-t border-stone-300 dark:border-[#24201b] mt-4">
+      <footer className="flex items-center justify-between gap-3 pt-2 border-t border-stone-300 dark:border-[#24201b] shrink-0">
         <PrimaryButton
           variant={isLight ? 'outline' : 'dark'}
-          size="md"
+          size="sm"
           onClick={() => navigate('FORMAT_SELECTION')}
-          className="w-36 sm:w-44 text-xs tracking-widest"
+          className="w-28 sm:w-36 text-[10px] tracking-widest"
         >
           BACK
         </PrimaryButton>
 
         <PrimaryButton
           variant={isComplete ? 'terracotta' : isLight ? 'outline' : 'dark'}
-          size="md"
+          size="sm"
           scalloped={isComplete}
           scallopColor={isLight ? '#382f25' : '#ffd166'}
           disabled={!isComplete}
           onClick={handleContinue}
-          icon={<ArrowRight className="w-4 h-4" />}
-          className="w-48 sm:w-56 text-xs sm:text-sm tracking-widest font-semibold"
+          icon={<ArrowRight className="w-3.5 h-3.5" />}
+          className="w-40 sm:w-48 text-[11px] sm:text-xs tracking-widest font-semibold"
         >
           {isComplete ? 'CONTINUE TO EDIT' : `NEED ${remainingCount} MORE`}
         </PrimaryButton>

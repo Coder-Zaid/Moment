@@ -33,7 +33,7 @@ export const CameraViewfinder: React.FC<CameraViewfinderProps> = ({
   const showSuggestion = showPoseGuide && currentPose && !isCountingDown && !isBannerDismissed
 
   return (
-    <div className="relative w-full aspect-[4/3] sm:aspect-[16/10] md:aspect-[16/9] max-h-[58vh] rounded-2xl overflow-hidden bg-[#0d0c0b] border border-[#2e2821] shadow-2xl flex items-center justify-center select-none">
+    <div className="relative w-full aspect-[4/3] max-h-[36vh] sm:max-h-[38vh] rounded-2xl overflow-hidden bg-[#0d0c0b] border border-[#2e2821] shadow-2xl flex items-center justify-center select-none shrink">
       {/* 1. Live Video Feed of the Guest (Always full screen & visible) */}
       <video
         ref={videoRef}

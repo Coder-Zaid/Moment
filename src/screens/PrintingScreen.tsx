@@ -176,7 +176,7 @@ export const PrintingScreen: React.FC = () => {
   }
 
   return (
-    <div className="flex-1 flex flex-col justify-between max-w-5xl mx-auto w-full px-4 py-3 sm:py-5">
+    <div className="flex-1 h-full max-h-full flex flex-col justify-between w-full px-2 py-0.5 sm:py-1 select-none overflow-hidden">
       {/* Screen Reader Live Status */}
       <div role="status" aria-live="polite" className="sr-only">
         {printStatus.message}

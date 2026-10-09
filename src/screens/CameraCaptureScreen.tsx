@@ -198,7 +198,7 @@ export const CameraCaptureScreen: React.FC = () => {
   const totalCount = String(requiredPhotoCount).padStart(2, '0')
 
   return (
-    <div className="flex-1 flex flex-col justify-between max-w-4xl mx-auto w-full py-1 sm:py-3 select-none">
+    <div className="flex-1 h-full max-h-full flex flex-col justify-between w-full py-0.5 sm:py-1 select-none overflow-hidden">
       {/* 1. TOP HEADER & COUNTER */}
       <header
         className={`flex items-center justify-between px-3 sm:px-6 py-2 z-10 rounded-2xl shadow-sm backdrop-blur-md mb-1 sm:mb-2 border ${
